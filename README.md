@@ -1,5 +1,5 @@
 # reversible-image-censorship-tool
-Primitive visual encryption and decryption scripts for PNG images.
+Primitive encryption and decryption scripts for PNG images.
 
 ## Preface
 The idea to write a tool for reversible image censorship came to me when I decided to start moving to [Pixiv](https://www.pixiv.net/en/). I checked their rules and came across ones that require artists to censor genitals in their works, according to Japanese law (specifically, the infamous Article 175 of the Japanese Criminal Code). I'm against censorship, but if I want to upload my explicit works to the site, I have to obey the rules.
