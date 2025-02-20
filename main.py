@@ -25,7 +25,7 @@ def main():
         img_array = np.array(input_img)
         print("Loaded.\n")
         
-        regions_num_max = (input_img.size[0] - 2) // (WORD * 4)
+        regions_num_max = (input_img.size[0] - 2) // (WORD * 4) * 3
         if regions_num_max == 0:
             print("The image must be at least 66 pixels wide to be uncensored.")
             return
@@ -67,7 +67,7 @@ def main():
         img_array = np.array(input_img)
         print("Loaded.\n")
         
-        regions_num_max = (input_img.size[0] - 2) // (WORD * 4)
+        regions_num_max = (input_img.size[0] - 2) // (WORD * 4) * 3
         if regions_num_max == 0:
             print("The image must be at least 66 pixels wide to be censored.")
             return
@@ -75,16 +75,13 @@ def main():
         for i in range(regions_num_max): regions.append([0, 0, 0, 0])
         print("This image may contain up to " + str(regions_num_max) + " censored region(s).")
         
-        if regions_num_max > 1:
-            regions_num = int(input("Specify the number of regions to input: "))
-            if regions_num <= 0:
-                print("Regions number must be greater than 0. Reassigned the number to 1.")
-                regions_num = 1
-            elif regions_num > regions_num_max:
-                print("Regions number must not be greater than {0}. Reassigned the number to {0}.".format(regions_num_max))
-                regions_num = regions_num_max
-        else:
-            regions_num = 1 # No specification needed if there is just 1 region available.
+        regions_num = int(input("Specify the number of regions to input: "))
+        if regions_num <= 0:
+            print("Regions number must be greater than 0. Reassigned the number to 1.")
+            regions_num = 1
+        elif regions_num > regions_num_max:
+            print("Regions number must not be greater than {0}. Reassigned the number to {0}.".format(regions_num_max))
+            regions_num = regions_num_max
         print()
         
         print("Enter the region(s) to censor: Xpos Ypos Xsize Ysize")
