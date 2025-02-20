@@ -58,7 +58,7 @@ When censoring the image, the last row of the image is being copied and added to
 The structure of the data row is such (from right to left)
 | Pixels | Data |
 | ----------- | ----------- |
-| 2 | [Scale mark](a "The first pixel contains 0, the second pixel contains 1. In case if the censored image will be upscaled by some integer number (pixel art upscaling, for example), the tool will detect it and still correctly uncensore the image.") |
+| 2 | [Scale mark](a "The first pixel contains 0, the second pixel contains 1. In case if the censored image will be upscaled by some integer number (pixel art upscaling, for example), the tool will detect it and still correctly uncensor the image.") |
 | 16 | Position X |
 | 16 | Position Y |
 | 16 | Size X |
@@ -69,7 +69,7 @@ The structure of the data row is such (from right to left)
 
 ## Instruction
 For censoring:
-1. Place an original PNG image into the directory wwith `main.py` as `original.png`
+1. Place an original PNG image into the directory with `main.py` as `original.png`
 2. Run `main.py`
 3. Enter 2
 4. Enter 4 numbers separated with space: X position, Y position, X size, Y size
