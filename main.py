@@ -25,27 +25,33 @@ def main():
         img_array = np.array(input_img)
         print("Loaded.\n")
         
-        print("Exctracting uncensoring data.")
-        image_data = data.extract(img_array)
+        regions_num_max = (input_img.size[0] - 2) // (WORD * 4)
+        if regions_num_max == 0:
+            print("The image must be at least 66 pixels wide to be uncensored.")
+            return
+        
+        print("Exctracting the uncensoring data.")
+        image_data = data.extract(img_array, regions_num_max)
         
         img_array = image_data[0]
-        pos_x = image_data[1]
-        pos_y = image_data[2]
-        size_x = image_data[3]
-        size_y = image_data[4]
-        scale = image_data[5]
-        methods = image_data[6]
+        scale = image_data[1]
+        methods = image_data[2]
+        regions = image_data[3]
+        regions_num = len(regions)
         
         print("Uncensoring.")
         if methods[2] == 1:
             print("Unhiding...")
-            img_array = hider.uncensor(img_array, pos_x, pos_y, size_x, size_y, scale)
+            for i in reversed(range(regions_num)):
+                img_array = hider.uncensor(img_array, regions[i][0], regions[i][1], regions[i][2], regions[i][3], scale)
         if methods[1] == 1:
             print("Denoising...")
-            img_array = noiser.uncensor(img_array, pos_x, pos_y, size_x, size_y, scale)
+            for i in reversed(range(regions_num)):
+                img_array = noiser.uncensor(img_array, regions[i][0], regions[i][1], regions[i][2], regions[i][3], scale)
         if methods[0] == 1:
             print("Unmixing...")
-            img_array = mixer.uncensor(img_array, pos_x, pos_y, size_x, size_y, scale)
+            for i in reversed(range(regions_num)):
+                img_array = mixer.uncensor(img_array, regions[i][0], regions[i][1], regions[i][2], regions[i][3], scale)
         
         output_img = Image.fromarray(img_array)
         output_img.save("uncensored.png")
@@ -65,7 +71,8 @@ def main():
         if regions_num_max == 0:
             print("The image must be at least 66 pixels wide to be censored.")
             return
-        regions = [[0, 0, 0, 0] * regions_num_max]
+        regions = []
+        for i in range(regions_num_max): regions.append([0, 0, 0, 0])
         print("This image may contain up to " + str(regions_num_max) + " censored region(s).")
         
         if regions_num_max > 1:
@@ -82,7 +89,8 @@ def main():
         
         print("Enter the region(s) to censor: Xpos Ypos Xsize Ysize")
         for i in range(regions_num):
-            pos_x, pos_y, size_x, size_y = map(int, input("{0}/{1}: ".format(i + 1, regions_num)).split())
+            print("Region {0}/{1}: ".format(i + 1, regions_num))
+            pos_x, pos_y, size_x, size_y = map(int, input().split())
             regions[i][0] = pos_x
             regions[i][1] = pos_y
             regions[i][2] = size_x
@@ -96,15 +104,18 @@ def main():
         print("\nCensoring the image.")
         if flag_mixing == 1:
             print("Mixing...")
-            img_array = mixer.censor(img_array, pos_x, pos_y, size_x, size_y)
+            for i in range(regions_num):
+                img_array = mixer.censor(img_array, regions[i][0], regions[i][1], regions[i][2], regions[i][3])
         if flag_noising == 1:
             print("Noising...")
-            img_array = noiser.censor(img_array, pos_x, pos_y, size_x, size_y)
+            for i in range(regions_num):
+                img_array = noiser.censor(img_array, regions[i][0], regions[i][1], regions[i][2], regions[i][3])
         if flag_hiding == 1:
             print("Hiding...")
-            img_array = hider.censor(img_array, pos_x, pos_y, size_x, size_y)
+            for i in range(regions_num):
+                img_array = hider.censor(img_array, regions[i][0], regions[i][1], regions[i][2], regions[i][3])
         print("Injecting data for uncensoring.")
-        img_array = data.inject(img_array, pos_x, pos_y, size_x, size_y, methods)
+        img_array = data.inject(img_array, regions, methods)
         
         output_img = Image.fromarray(img_array)
         output_img.save("censored.png")
