@@ -4,7 +4,7 @@ Primitive encryption and decryption scripts for PNG images.
 ## Preface
 The idea to write a tool for reversible image censorship came to me when I decided to start moving to [Pixiv](https://www.pixiv.net/en/). I checked their rules and came across ones that require artists to censor genitals in their works, according to Japanese law (specifically, the infamous Article 175 of the Japanese Criminal Code). I'm against censorship, but if I want to upload my explicit works to the site, I have to obey the rules.
 
-As an unorthodox compromise (after all, I can always just share links to uncensored works variants, duh), I came up with solutions of modifying images in the ways that severely distort the specified "obscene" region, alike to black bars and pixelization ("mosaics"). But unlike the black bars and pixelization, which are irreversibly destroying the original image information, mine methods are only modifying it in a way that may be reverted to the original, uncensored image.
+As an unorthodox compromise (after all, I can always just share links to uncensored works variants, duh), I came up with solutions of modifying images in the ways that severely distort the specified "obscene" regions, alike to black bars and pixelization ("mosaics"). But unlike the black bars and pixelization, which are irreversibly destroying the original image information, mine methods are only modifying it in a way that may be reverted to the original, uncensored image.
 
 My methods are essentially the combination of primitive cryptography and steganography: the specified areas of the image are being encrypted, and then an additional hidden information ("the key") is being added to the censored image for further automatic uncensoring (decryption of the distorted areas, restoring to the original).
 
@@ -18,9 +18,17 @@ The PNG images below will be used for demonstrating the censorship methods. The 
 ![original_x4](https://github.com/user-attachments/assets/b3ec8a02-23ee-45e7-986f-adf322618ff5)
 ![original](https://github.com/user-attachments/assets/01d2d195-0fef-4470-b906-21eacb19f6fc)
 
-> `1st` image region specification: [120](a "X position (from left)") [267](a "Y position (from top)") [92](a "Width (X size, to right)") [121](a "Height (Y size, to down)")
+> `1st` image regions specification:
 >
-> `2nd` image region specification: 85 78 16 21
+> [135](a "X position (from left)") [267](a "Y position (from top)") [69](a "Width (X size, to right)") [51](a "Height (Y size, to down)")
+>
+> 201 289 11 69
+>
+> 120 316 86 73
+
+> `2nd` image region specification:
+>
+> 85 78 16 21
 
 ### "Mixing" method
 This method changes the order of pixels in the specified area by transposing it 5 times, turning the region into a unified mess.
@@ -28,14 +36,14 @@ This method changes the order of pixels in the specified area by transposing it 
 > [!CAUTION]
 > The specified area should not be a perfect square, otherwise this method won't distort the area as intended.
 
-![censored](https://github.com/user-attachments/assets/59e29856-3cc4-4b50-9c2d-cd8df63ac272)
-![censored](https://github.com/user-attachments/assets/32637ed1-7ad1-45d0-9139-3eb1effbdf0f)
+![censored_m](https://github.com/user-attachments/assets/41c26901-bfe7-4e6c-b06b-8142e480a562)
+![censored_m](https://github.com/user-attachments/assets/7954beea-4b5e-4254-8c79-b5f0c1252458)
 
 ### "Noising" method
 This method adds a certain value to the color value according to the formula (takes pixel X and Y positions as arguments) and then performs modulo operation by 256. To additionally distort the specified region, a hue shift is being performed by swapping the color channels: R→G, G→B, B→R.
 
-![censored](https://github.com/user-attachments/assets/0597f94d-e831-4643-854b-027a4c5048a5)
-![censored](https://github.com/user-attachments/assets/7818b770-4863-454c-b2df-f0b51bfd26a5)
+![censored_n](https://github.com/user-attachments/assets/14fbb2d1-6bde-4890-9a8f-2ae3d590b607)
+![censored_n](https://github.com/user-attachments/assets/3ec4f166-c8f0-4e0c-8060-cfd534679b9f)
 
 ### "Hiding" method
 This method just sets the alpha channel value of the specified area's pixels to 0, making the area fully transparent, yet still containing the color data.
@@ -43,17 +51,17 @@ This method just sets the alpha channel value of the specified area's pixels to 
 > [!CAUTION]
 > The specified area should not have transparent or semi-transparent pixels, otherwise this method will essentially corrupt the image, since there's no way to restore the original opacity level.
 
-![censored](https://github.com/user-attachments/assets/376b1815-d417-4054-be05-624a04284bf0)
-![censored](https://github.com/user-attachments/assets/844dd195-6617-49dd-96a1-c9a9a4665a89)
+![censored_h](https://github.com/user-attachments/assets/6bc3ba5b-d69b-4130-befd-552ba48c4dde)
+![censored_h](https://github.com/user-attachments/assets/9293deb3-beed-4886-8147-8015a00ba92d)
 
 ### Combining methods
 Methods can be combined to scramble the specified area even further. Here is the result of using both the "mixing" and the "noising":
 
-![censored](https://github.com/user-attachments/assets/b62ef1e8-cd0d-44dc-82ae-1817c5775fea)
-![censored](https://github.com/user-attachments/assets/5bf180a9-8b91-4440-81bd-e5b6771f4e91)
+![censored_mn](https://github.com/user-attachments/assets/aefe6b1c-7c90-4713-b4e1-e328f58b9eb4)
+![censored_mh](https://github.com/user-attachments/assets/31e56044-f5fd-4845-9ff7-a0aa080d6b56)
 
 ## Additional data hiding
-When censoring the image, the last row of the image is being copied and added to the output image, this way increasing the image's height by 1 pixel. Into this additional row, a data necessary for automatic uncensoring is being injected. The information is being stored 1 bit per pixel, in the last bit of each color channels.
+When censoring the image, the last row of the image is being copied and added to the output image, this way increasing the image's height by 1 pixel. Into this additional row, a data necessary for automatic uncensoring is being injected. The information is being stored 1 bit per color channel of pixel.
 
 The structure of the data row is such (from right to left)
 | Pixels | R data | G data | B data |
@@ -73,7 +81,7 @@ For censoring:
 2. Run `main.py`
 3. Enter 2
 4. Enter the number of censored regions you're going to input
-5. Enter (specified by you number of times) 4 numbers separated with space: X position, Y position, X size, Y size
+5. Enter (specified by you amount of times) 4 numbers separated with space: X position, Y position, X size, Y size
 6. Enter a combination of three 1s and 0s separated with space to determine which methods to use
 7. A `censored.png` image will appear in the same directory
 
