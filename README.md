@@ -76,6 +76,12 @@ The structure of the data row is such (from right to left)
 **Total:** 66 pixels. This way, the original image should be at least that wide so it can be censored (3 regions available). Each additional 64 pixels allow to add 3 more regions.
 
 ## Instruction
+> [!IMPORTANT]
+> Make sure that you have installed these:
+> - [Python](https://www.python.org/)
+> - [NumPy](https://numpy.org/)
+> - [Pillow](https://pillow.readthedocs.io/en/latest/index.html)
+
 For censoring:
 1. Place an original PNG image into the directory with `main.py` as `original.png`
 2. Run `main.py`
