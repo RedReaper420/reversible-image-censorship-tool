@@ -1,4 +1,4 @@
-# reversible-image-censorship-tool
+# Reversible Image Censorship Tool
 Primitive encryption and decryption scripts for PNG images.
 
 ## Preface
