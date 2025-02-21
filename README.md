@@ -31,13 +31,13 @@ The PNG images below will be used for demonstrating the censorship methods. The 
 > 85 78 16 21
 
 ### "Mixing" method
-This method changes the order of pixels in the specified area by transposing it 5 times, turning the region into a unified mess.
+This method changes the order of pixels in the specified area by transposing it 6 times, turning the region into a unified mess.
 
 > [!CAUTION]
 > The specified area should not be a perfect square, otherwise this method won't distort the area as intended.
 
-![censored_m](https://github.com/user-attachments/assets/41c26901-bfe7-4e6c-b06b-8142e480a562)
-![censored_m](https://github.com/user-attachments/assets/7954beea-4b5e-4254-8c79-b5f0c1252458)
+![censored_m](https://github.com/user-attachments/assets/04f0a915-83e5-4207-8b51-1f798c1a1119)
+![censored_m](https://github.com/user-attachments/assets/850fb43e-e34d-40bd-ad76-3beb80b14018)
 
 ### "Noising" method
 This method adds a certain value to the color value according to the formula (takes pixel X and Y positions as arguments) and then performs modulo operation by 256. To additionally distort the specified region, a hue shift is being performed by swapping the color channels: R→G, G→B, B→R.
@@ -57,8 +57,8 @@ This method just sets the alpha channel value of the specified area's pixels to 
 ### Combining methods
 Methods can be combined to scramble the specified area even further. Here is the result of using both the "mixing" and the "noising":
 
-![censored_mn](https://github.com/user-attachments/assets/aefe6b1c-7c90-4713-b4e1-e328f58b9eb4)
-![censored_mh](https://github.com/user-attachments/assets/31e56044-f5fd-4845-9ff7-a0aa080d6b56)
+![censored_mn](https://github.com/user-attachments/assets/82897748-8055-4fa5-8876-e8c977246c3b)
+![censored_mn](https://github.com/user-attachments/assets/3be368a9-053d-4725-a46e-b0798c680a85)
 
 ## Additional data hiding
 When censoring the image, the last row of the image is being copied and added to the output image, this way increasing the image's height by 1 pixel. Into this additional row, a data necessary for automatic uncensoring is being injected. The information is being stored 1 bit per color channel of pixel.
