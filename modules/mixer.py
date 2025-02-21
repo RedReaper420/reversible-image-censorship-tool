@@ -1,6 +1,6 @@
 import numpy as np
 
-MIX_NUM = 5
+MIX_NUM = 6
 
 def censor(img_array, pos_x, pos_y, size_x, size_y):
     for mixes in range(MIX_NUM):
