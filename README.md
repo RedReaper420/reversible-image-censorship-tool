@@ -15,8 +15,8 @@ The PNG images below will be used for demonstrating the censorship methods. The 
 > [Handholding original source](https://x.com/suzuha00/status/1870830462266167516). [Silly pixel art meme by me](https://www.newgrounds.com/art/view/redreaperripper/so-true-bestie-pegs-you).
 
 
-<img src="https://github.com/user-attachments/assets/16eeda68-eab8-43be-8b58-a7093714b30f" width="45%" height="auto">
-<img src="https://github.com/user-attachments/assets/b3ec8a02-23ee-45e7-986f-adf322618ff5" width="45%" height="auto">
+<img src="https://github.com/user-attachments/assets/16eeda68-eab8-43be-8b58-a7093714b30f" width="48%" height="auto">
+<img src="https://github.com/user-attachments/assets/b3ec8a02-23ee-45e7-986f-adf322618ff5" width="48%" height="auto">
 <img src="https://github.com/user-attachments/assets/01d2d195-0fef-4470-b906-21eacb19f6fc">
 
 > `1st` image regions specification:
@@ -37,14 +37,14 @@ This method changes the order of pixels in the specified area by transposing it 
 > [!CAUTION]
 > The specified area should not be a perfect square, otherwise this method won't distort the area as intended.
 
-<img src="https://github.com/user-attachments/assets/04f0a915-83e5-4207-8b51-1f798c1a1119" width="45%" height="auto">
-<img src="https://github.com/user-attachments/assets/850fb43e-e34d-40bd-ad76-3beb80b14018" width="45%" height="auto">
+<img src="https://github.com/user-attachments/assets/04f0a915-83e5-4207-8b51-1f798c1a1119" width="48%" height="auto">
+<img src="https://github.com/user-attachments/assets/850fb43e-e34d-40bd-ad76-3beb80b14018" width="48%" height="auto">
 
 ### "Noising" method
 This method adds a certain value to the color value according to the formula (takes pixel X and Y positions as arguments) and then performs modulo operation by 256. To additionally distort the specified region, a hue shift is being performed by swapping the color channels: R→G, G→B, B→R.
 
-<img src="https://github.com/user-attachments/assets/14fbb2d1-6bde-4890-9a8f-2ae3d590b607" width="45%" height="auto">
-<img src="https://github.com/user-attachments/assets/3ec4f166-c8f0-4e0c-8060-cfd534679b9f" width="45%" height="auto">
+<img src="https://github.com/user-attachments/assets/14fbb2d1-6bde-4890-9a8f-2ae3d590b607" width="48%" height="auto">
+<img src="https://github.com/user-attachments/assets/3ec4f166-c8f0-4e0c-8060-cfd534679b9f" width="48%" height="auto">
 
 ### "Hiding" method
 This method just sets the alpha channel value of the specified area's pixels to 0, making the area fully transparent, yet still containing the color data.
@@ -52,14 +52,14 @@ This method just sets the alpha channel value of the specified area's pixels to 
 > [!CAUTION]
 > The specified area should not have transparent or semi-transparent pixels, otherwise this method will essentially corrupt the image, since there's no way to restore the original opacity level.
 
-<img src="https://github.com/user-attachments/assets/6bc3ba5b-d69b-4130-befd-552ba48c4dde" width="45%" height="auto">
-<img src="https://github.com/user-attachments/assets/9293deb3-beed-4886-8147-8015a00ba92d" width="45%" height="auto">
+<img src="https://github.com/user-attachments/assets/6bc3ba5b-d69b-4130-befd-552ba48c4dde" width="48%" height="auto">
+<img src="https://github.com/user-attachments/assets/9293deb3-beed-4886-8147-8015a00ba92d" width="48%" height="auto">
 
 ### Combining methods
 Methods can be combined to scramble the specified area even further. Here is the result of using both the "mixing" and the "noising":
 
-<img src="https://github.com/user-attachments/assets/82897748-8055-4fa5-8876-e8c977246c3b" width="45%" height="auto">
-<img src="https://github.com/user-attachments/assets/3be368a9-053d-4725-a46e-b0798c680a85" width="45%" height="auto">
+<img src="https://github.com/user-attachments/assets/82897748-8055-4fa5-8876-e8c977246c3b" width="48%" height="auto">
+<img src="https://github.com/user-attachments/assets/3be368a9-053d-4725-a46e-b0798c680a85" width="48%" height="auto">
 
 ## Additional data hiding
 When censoring the image, the last row of the image is being copied and added to the output image, this way increasing the image's height by 1 pixel. Into this additional row, a data necessary for automatic uncensoring is being injected. The information is being stored 1 bit per color channel of pixel.
