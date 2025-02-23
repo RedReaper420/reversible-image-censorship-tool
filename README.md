@@ -83,7 +83,7 @@ The structure of the data row is such (from right to left)
 > - [NumPy](https://numpy.org/)
 > - [Pillow](https://pillow.readthedocs.io/en/latest/index.html)
 
-For censoring:
+For **censoring**:
 1. Place an original PNG image into the directory with `main.py` as `original.png`
 2. Run `main.py`
 3. Enter 2
@@ -92,7 +92,7 @@ For censoring:
 6. Enter a combination of three 1s and 0s separated with space to determine which methods to use
 7. A `censored.png` image will appear in the same directory
 
-For uncensoring:
+For **uncensoring**:
 1. Place a PNG image censored with this tool into the directory with `main.py` as `censored.png`
 2. Run `main.py`
 3. Enter 1
