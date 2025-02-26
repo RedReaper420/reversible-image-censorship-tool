@@ -83,6 +83,8 @@ The structure of the data row is such (from right to left)
 > - [NumPy](https://numpy.org/)
 > - [Pillow](https://pillow.readthedocs.io/en/latest/index.html)
 
+0. Download the repository content and unzip it.
+
 For **censoring**:
 1. Place an original PNG image into the directory with `main.py` as `original.png`
 2. Run `main.py`
