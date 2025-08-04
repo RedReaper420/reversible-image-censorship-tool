@@ -5,6 +5,7 @@ WORD = 16 # The support of images with sides sizes up to 65535 should be enough,
 METHODS_NUM = 4 # Without the need to rewrite data positioning in the data row, there can be up to 4 methods.
 
 def bit_write(channel_value, data_bit):
+    channel_value = int(channel_value)
     sign = 1
     if channel_value == 255:
         sign = -1
