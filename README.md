@@ -2,18 +2,17 @@
 Primitive encryption and decryption scripts for PNG images.
 
 ## Preface
-The idea to write a tool for reversible image censorship came to me when I decided to start moving to [Pixiv](https://www.pixiv.net/en/). I checked their rules and came across ones that require artists to censor genitals in their works, according to Japanese law (specifically, the infamous Article 175 of the Japanese Criminal Code). I'm against censorship, but if I want to upload my explicit works to the site, I have to obey the rules.
+The idea to write a tool for reversible image censorship came to me when I decided to start moving to [Pixiv](https://www.pixiv.net/en/). I checked their rules and came across ones that requires artists to censor genitals in their works, according to Japanese law (specifically, the infamous Article 175 of Japanese Criminal Code). I'm against censorship, but if I want to upload my explicit works to the site, I have to obey the rules.
 
 As an unorthodox compromise (after all, I can always just share links to uncensored works variants, duh), I came up with solutions of modifying images in the ways that severely distort the specified "obscene" regions, alike to black bars and pixelization ("mosaics"). But unlike the black bars and pixelization, which are irreversibly destroying the original image information, mine methods are only modifying it in a way that may be reverted to the original, uncensored image.
 
-My methods are essentially the combination of primitive cryptography and steganography: the specified areas of the image are being encrypted, and then an additional hidden information ("the key") is being added to the censored image for further automatic uncensoring (decryption of the distorted areas, restoring to the original).
+My methods are essentially the combination of primitive cryptography and steganography: the specified areas of the image are being "encrypted", and then an additional hidden information ("the key") is being added to the censored image, for further automatic uncensoring with help of this very tool (decryption of the distorted areas, restoring to the original).
 
 ## Methods
-There are 3 available methods of reversible censorship, which can be combined. Although, using just one is enough to conceal the specified area.
+There are 4 available methods of reversible censorship, which can be combined. Although, using just one is enough to conceal the specified area.
 
-The PNG images below will be used for demonstrating the censorship methods. The pixel art one will be used in the orignal (small) resolution and upscaled after the transformation.
+The PNG images below will be used for demonstrating the censorship methods. The pixel art one will be used in the orignal (small) resolution and upscaled (400%) after the transformation.
 > [Handholding original source](https://x.com/suzuha00/status/1870830462266167516). [Silly pixel art meme by me](https://www.newgrounds.com/art/view/redreaperripper/so-true-bestie-pegs-you).
-
 
 <img src="https://github.com/user-attachments/assets/16eeda68-eab8-43be-8b58-a7093714b30f" width="48%" height="auto">
 <img src="https://github.com/user-attachments/assets/b3ec8a02-23ee-45e7-986f-adf322618ff5" width="48%" height="auto">
@@ -31,6 +30,15 @@ The PNG images below will be used for demonstrating the censorship methods. The 
 >
 > 85 78 16 21
 
+### "Subtracting" method
+This method subtracts the value of the pixel by the value of the previous pixel. Subtraction applies in a checker pattern, first by columns, then by rows.
+
+> [!CAUTION]
+> The affected area is actually larger than the one specified by user, by 1 pixel in width and height.
+
+<img src="https://github.com/user-attachments/assets/da57f2a5-aab4-4575-926e-0bf950b79213" width="48%" height="auto">
+<img src="https://github.com/user-attachments/assets/17014316-a08d-400f-a439-263a200f6f62" width="48%" height="auto">
+
 ### "Mixing" method
 This method changes the order of pixels in the specified area by transposing it 6 times, turning the region into a unified mess.
 
@@ -41,7 +49,7 @@ This method changes the order of pixels in the specified area by transposing it 
 <img src="https://github.com/user-attachments/assets/850fb43e-e34d-40bd-ad76-3beb80b14018" width="48%" height="auto">
 
 ### "Noising" method
-This method adds a certain value to the color value according to the formula (takes pixel X and Y positions as arguments) and then performs modulo operation by 256. To additionally distort the specified region, a hue shift is being performed by swapping the color channels: R→G, G→B, B→R.
+This method adds a pseudo-random value, generated according to the pixel position, and then performs modulo operation by 256. To additionally distort the specified region, a hue shift is being performed by swapping the color channels: R→G, G→B, B→R.
 
 <img src="https://github.com/user-attachments/assets/14fbb2d1-6bde-4890-9a8f-2ae3d590b607" width="48%" height="auto">
 <img src="https://github.com/user-attachments/assets/3ec4f166-c8f0-4e0c-8060-cfd534679b9f" width="48%" height="auto">
@@ -56,7 +64,7 @@ This method just sets the alpha channel value of the specified area's pixels to 
 <img src="https://github.com/user-attachments/assets/9293deb3-beed-4886-8147-8015a00ba92d" width="48%" height="auto">
 
 ### Combining methods
-Methods can be combined to scramble the specified area even further. Here is the result of using both the "mixing" and the "noising":
+Methods can be combined to scramble the specified area even further. Here is the result of using both the "mixing" and the "noising" (see how the grid pattern from the noising method has gone):
 
 <img src="https://github.com/user-attachments/assets/82897748-8055-4fa5-8876-e8c977246c3b" width="48%" height="auto">
 <img src="https://github.com/user-attachments/assets/3be368a9-053d-4725-a46e-b0798c680a85" width="48%" height="auto">
@@ -68,7 +76,7 @@ The structure of the data row is such (from right to left)
 | Pixels | R data | G data | B data |
 | - | - | - | - |
 | 1 | Mixing flag | Noising flag | [Scale mark](a "The first pixel contains 0, the second pixel contains 1. In case if the censored image will be upscaled by some integer number (pixel art upscaling, for example), the tool will detect it and still correctly uncensor the image.") |
-| 1 | Hiding flag | - | Scale mark |
+| 1 | Hiding flag | Subracting flag | Scale mark |
 | 16 | Reg. 1 Position X | Reg. 2 Position X | Reg. 3 Position X | 
 | 16 | Reg. 1 Position Y | Reg. 2 Position X | Reg. 3 Position X | 
 | 16 | Reg. 1 Size X | Reg. 2 Position X | Reg. 3 Position X | 
@@ -79,27 +87,27 @@ The structure of the data row is such (from right to left)
 ## Instruction
 > [!IMPORTANT]
 > Make sure that you have installed these:
-> - [Python](https://www.python.org/)
-> - [NumPy](https://numpy.org/)
-> - [Pillow](https://pillow.readthedocs.io/en/latest/index.html)
+> - [Python](https://www.python.org/) (last used 3.13.5)
+> - [NumPy](https://numpy.org/) (last used 2.3.2)
+> - [Pillow](https://pillow.readthedocs.io/en/latest/index.html) (last used 11.3.0)
 
 0. Download the repository content and unzip it.
 
 For **censoring**:
-1. Place an original PNG image into the directory with `main.py` as `original.png`
+1. Place the original PNG image into the directory with `main.py` as `original.png`
 2. Run `main.py`
 3. Enter 2
 4. Enter the number of censored regions you're going to input
 5. Enter (specified by you amount of times) 4 numbers separated with space: X position, Y position, X size, Y size
-6. Enter a combination of three 1s and 0s separated with space to determine which methods to use
-7. A `censored.png` image will appear in the same directory
+6. Enter a combination of four 1s and 0s separated with space to determine which transormation methods to use
+7. The `censored.png` image will appear in the same directory
 
 For **uncensoring**:
-1. Place a PNG image censored with this tool into the directory with `main.py` as `censored.png`
+1. Place the PNG image censored with this tool into the directory with `main.py` as `censored.png`
 2. Run `main.py`
 3. Enter 1
 4. ???
-5. PROFIT! Now an `uncensored.png` should appear in the same dir
+5. PROFIT! Now, the `uncensored.png` should appear in the same directory
 
 ## Afterword
 I want to say thank you to people from Discord who gave me some hints on this tool implementation.
