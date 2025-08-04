@@ -1,6 +1,7 @@
 import numpy as np
 
 def noise(channel_value, col, row, sign=1, scale=1):
+    channel_value = int(channel_value)
     seed = (col // scale + 63) * (row // scale + 1) * 71
     out_value = (channel_value + seed * sign) % 256
     
