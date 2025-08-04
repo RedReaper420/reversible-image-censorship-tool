@@ -11,7 +11,7 @@ def bit_write(channel_value, data_bit):
     return channel_value + ((channel_value % 2) ^ data_bit) * sign
 
 def bit_read(channel_value):
-    return channel_value % 2
+    return int(channel_value) % 2
 
 def to_bin(value):
     bin_value = bin(value)[2:]
@@ -63,7 +63,7 @@ def inject(img_array, regions, methods):
     
     return img_array
 
-def extract(img_array, regions_num):
+def extract(img_array):
     img_original = Image.fromarray(img_array)
     width, height = img_original.size
     
@@ -76,6 +76,7 @@ def extract(img_array, regions_num):
             scale += 1
     
     # Reading coordinates and size for each region
+    regions_num = (width - 2*scale) // (WORD * 4 * scale) * 3
     regions = []
     for r in range(regions_num):
         regions.append([0, 0, 0, 0])
@@ -86,10 +87,10 @@ def extract(img_array, regions_num):
         
         for i in range(WORD):
             r_shift = (r // 3) * 4
-            pos_x += bit_read(img_array[height-1, width-1 - (2 + WORD*(0+r_shift)*scale + i)*scale][r % 3]) * (2**i)
-            pos_y += bit_read(img_array[height-1, width-1 - (2 + WORD*(1+r_shift)*scale + i)*scale][r % 3]) * (2**i)
-            size_x += bit_read(img_array[height-1, width-1 - (2 + WORD*(2+r_shift)*scale + i)*scale][r % 3]) * (2**i)
-            size_y += bit_read(img_array[height-1, width-1 - (2 + WORD*(3+r_shift)*scale + i)*scale][r % 3]) * (2**i)
+            pos_x += bit_read(img_array[height-1, width-1 - (2 + WORD*(0+r_shift) + i)*scale][r % 3]) * (2**i)
+            pos_y += bit_read(img_array[height-1, width-1 - (2 + WORD*(1+r_shift) + i)*scale][r % 3]) * (2**i)
+            size_x += bit_read(img_array[height-1, width-1 - (2 + WORD*(2+r_shift) + i)*scale][r % 3]) * (2**i)
+            size_y += bit_read(img_array[height-1, width-1 - (2 + WORD*(3+r_shift) + i)*scale][r % 3]) * (2**i)
         
         regions[r][0] = pos_x
         regions[r][1] = pos_y

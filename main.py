@@ -31,7 +31,7 @@ def main():
             return
         
         print("Exctracting the uncensoring data.")
-        image_data = data.extract(img_array, regions_num_max)
+        image_data = data.extract(img_array)
         
         img_array = image_data[0]
         scale = image_data[1]
