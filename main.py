@@ -5,18 +5,19 @@ import modules.data as data
 import modules.hider as hider
 import modules.mixer as mixer
 import modules.noiser as noiser
+import modules.subtractor as subtractor
 
 WORD = 16
 
 def main():
     correct = False
     while correct == False:
-        mode = input("Select the mode: 1 - Uncensor, 2 - Censor\n")
+        mode = input("Select the mode:\n1 - Uncensor (need censored.png), 2 - Censor (needs original.png)\n")
         if mode == "1" or mode == "2":
             correct = True
 
     if mode == "1":
-        # Uncensoring
+        # UNCENSORING
         
         print("Loading the censored image.")
         with Image.open("censored.png") as input_img:
@@ -40,6 +41,7 @@ def main():
         regions_num = len(regions)
         
         print("Uncensoring.")
+        # Reversed order from censoring
         if methods[2] == 1:
             print("Unhiding...")
             for i in reversed(range(regions_num)):
@@ -48,6 +50,10 @@ def main():
             print("Denoising...")
             for i in reversed(range(regions_num)):
                 img_array = noiser.uncensor(img_array, regions[i][0], regions[i][1], regions[i][2], regions[i][3], scale)
+        if methods[3] == 1:
+            print("Reverting subtraction...")
+            for i in reversed(range(regions_num)):
+                img_array = subtractor.uncensor(img_array, regions[i][0], regions[i][1], regions[i][2], regions[i][3], scale)
         if methods[0] == 1:
             print("Unmixing...")
             for i in reversed(range(regions_num)):
@@ -58,7 +64,7 @@ def main():
         print("Image uncensored.")
         
     else:
-        # Censoring
+        # CENSORING
         
         print("Loading the original image.")
         with Image.open("original.png") as input_img:
@@ -93,16 +99,24 @@ def main():
             regions[i][2] = size_x
             regions[i][3] = size_y
         
-        print("\nSelect the censoring methods: Mixing Noising Hiding")
-        print("Input 3 flags (1s or 0s): ")
-        flag_mixing, flag_noising, flag_hiding = map(int, input().split())
-        methods = [flag_mixing, flag_noising, flag_hiding]
+        print("\nSelect the censoring methods: Subtracting Mixing Noising Hiding")
+        print("Input 4 flags (1s or 0s, space separated): ")
+        # User input order:
+        flag_subtracting, flag_mixing, flag_noising, flag_hiding  = map(int, input().split())
+        
+        # Methods data injection order:
+        methods = [flag_mixing, flag_noising, flag_hiding, flag_subtracting]
         
         print("\nCensoring the image.")
+        # Censoring order:
         if flag_mixing == 1:
             print("Mixing...")
             for i in range(regions_num):
                 img_array = mixer.censor(img_array, regions[i][0], regions[i][1], regions[i][2], regions[i][3])
+        if flag_subtracting == 1:
+            print("Subtracting...")
+            for i in range(regions_num):
+                img_array = subtractor.censor(img_array, regions[i][0], regions[i][1], regions[i][2], regions[i][3])
         if flag_noising == 1:
             print("Noising...")
             for i in range(regions_num):
@@ -111,6 +125,7 @@ def main():
             print("Hiding...")
             for i in range(regions_num):
                 img_array = hider.censor(img_array, regions[i][0], regions[i][1], regions[i][2], regions[i][3])
+        
         print("Injecting data for uncensoring.")
         img_array = data.inject(img_array, regions, methods)
         

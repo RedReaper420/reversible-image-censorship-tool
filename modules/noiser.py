@@ -1,19 +1,18 @@
 import numpy as np
 
+# This transformation method generates a pseudo-random value according to the pixel position, and adds this value to the pixel, then performs modulo 256. Additionally, color channels are being swapped.
+
 def noise(channel_value, col, row, sign=1, scale=1):
     channel_value = int(channel_value)
     seed = (col // scale + 63) * (row // scale + 1) * 71
-    out_value = (channel_value + seed * sign) % 256
-    
-    return out_value
+    return (channel_value + seed * sign) % 256
 
 def censor(img_array, pos_x, pos_y, size_x, size_y):
     for row in range(size_x):
         for col in range(size_y):
             # Noising
-            img_array[col + pos_y, row + pos_x][0] = noise(img_array[col + pos_y, row + pos_x][0], col, row)
-            img_array[col + pos_y, row + pos_x][1] = noise(img_array[col + pos_y, row + pos_x][1], col, row)
-            img_array[col + pos_y, row + pos_x][2] = noise(img_array[col + pos_y, row + pos_x][2], col, row)
+            for channel in range(3):
+                img_array[col + pos_y, row + pos_x][channel] = noise(img_array[col + pos_y, row + pos_x][channel], col, row)
             
             # Hue shifting
             img_array[col + pos_y, row + pos_x][0], \
@@ -34,9 +33,8 @@ def uncensor(img_array, pos_x, pos_y, size_x, size_y, scale):
     for row in range(size_x):
         for col in range(size_y):
             # Denoising
-            img_array[col + pos_y, row + pos_x][0] = noise(img_array[col + pos_y, row + pos_x][0], col, row, -1, scale)
-            img_array[col + pos_y, row + pos_x][1] = noise(img_array[col + pos_y, row + pos_x][1], col, row, -1, scale)
-            img_array[col + pos_y, row + pos_x][2] = noise(img_array[col + pos_y, row + pos_x][2], col, row, -1, scale)
+            for channel in range(3):
+                img_array[col + pos_y, row + pos_x][channel] = noise(img_array[col + pos_y, row + pos_x][channel], col, row, -1, scale)
             
             # Reverting hue shifting
             img_array[col + pos_y, row + pos_x][0], \

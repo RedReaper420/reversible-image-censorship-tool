@@ -1,5 +1,7 @@
 import numpy as np
 
+# This transformation method changes the order of pixels several times.
+
 MIX_NUM = 6
 
 def censor(img_array, pos_x, pos_y, size_x, size_y):

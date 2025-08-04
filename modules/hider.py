@@ -1,5 +1,7 @@
 import numpy as np
 
+# This transformation method makes opaque pixels transparent, while saving the actual color data.
+
 def censor(img_array, pos_x, pos_y, size_x, size_y):
     for row in range(size_x):
         for col in range(size_y):

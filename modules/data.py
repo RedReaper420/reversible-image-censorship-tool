@@ -1,8 +1,8 @@
 import numpy as np
 from PIL import Image
 
-WORD = 16 # Support of images with a sides sizes up to 65535 should be enough, right?
-METHODS_NUM = 3 # Without the need to rewrite the data positioning, there can be up to 4 methods.
+WORD = 16 # The support of images with sides sizes up to 65535 should be enough, right?
+METHODS_NUM = 4 # Without the need to rewrite data positioning in the data row, there can be up to 4 methods.
 
 def bit_write(channel_value, data_bit):
     sign = 1
